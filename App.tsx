@@ -8,6 +8,7 @@
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ConfigScreen from './src/screens/ConfigScreen';
+import './src/i18n/i18n.config';
 
 function App() {
   return (

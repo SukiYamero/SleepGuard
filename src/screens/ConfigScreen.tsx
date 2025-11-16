@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, Switch, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Slider from '@react-native-community/slider';
+import { useTranslation } from 'react-i18next';
 import { configScreenStyles as styles } from './ConfigScreen.styles';
 import FAQModal from '../components/FAQModal';
 
 const ConfigScreen = () => {
+  const { t } = useTranslation();
   const [minutes, setMinutes] = useState(25);
   const [isEnabled, setIsEnabled] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
@@ -18,9 +20,9 @@ const ConfigScreen = () => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerSpacer} />
-          <Text style={styles.headerTitle}>Inactivity Shield</Text>
+          <Text style={styles.headerTitle}>{t('appName')}</Text>
           <TouchableOpacity style={styles.helpButton} onPress={() => setShowFAQ(true)}>
-            <Text style={styles.helpText}>?</Text>
+            <Text style={styles.helpText}>{t('help')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -34,7 +36,7 @@ const ConfigScreen = () => {
           </View>
 
           {/* Título */}
-          <Text style={styles.mainTitle}>Detección de{'\n'}Inactividad</Text>
+          <Text style={styles.mainTitle}>{t('inactivityDetection')}</Text>
 
           {/* Toggle grande */}
           <View style={styles.toggleContainer}>
@@ -54,19 +56,19 @@ const ConfigScreen = () => {
             isEnabled && styles.statusMessageActive
           ]}>
             {isEnabled
-              ? 'El monitoreo se está ejecutando en segundo plano.'
-              : 'El monitoreo está desactivado.'}
+              ? t('monitoringActive')
+              : t('monitoringInactive')}
           </Text>
         </View>
 
         {/* Sección de ajustes */}
         <View style={styles.adjustmentsSection}>
-          <Text style={styles.sectionTitle}>Ajustes</Text>
+          <Text style={styles.sectionTitle}>{t('settings')}</Text>
 
           <View style={styles.sliderContainer}>
             <View style={styles.sliderRow}>
-              <Text style={styles.sliderLabel}>Volver al inicio tras inactividad</Text>
-              <Text style={styles.sliderValue}>{minutes} min</Text>
+              <Text style={styles.sliderLabel}>{t('returnToHomeLabel')}</Text>
+              <Text style={styles.sliderValue}>{minutes} {t('minutes')}</Text>
             </View>
 
             <Slider
@@ -82,8 +84,7 @@ const ConfigScreen = () => {
             />
 
             <Text style={styles.hintText}>
-              La app volverá al home después de {minutes} minuto(s) sin actividad.{'\n'}
-              Tu dispositivo se apagará según su configuración normal.
+              {t('hintText', { minutes })}
             </Text>
           </View>
         </View>
