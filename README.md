@@ -1,3 +1,98 @@
+# Inactivity Shield
+
+Una aplicación React Native para proteger la batería de tu dispositivo detectando periodos de inactividad y retornando automáticamente al home screen.
+
+## 🚀 Getting Started
+
+> **Note**: Este proyecto usa **pnpm** como gestor de paquetes. Asegúrate de tenerlo instalado antes de continuar.
+
+### Instalación de pnpm
+
+Si no tienes pnpm instalado:
+
+```sh
+npm install -g pnpm
+```
+
+### Paso 1: Instalar dependencias
+
+```sh
+pnpm install
+```
+
+### Paso 2: Iniciar Metro
+
+```sh
+pnpm start
+```
+
+### Paso 3: Ejecutar la aplicación
+
+#### Android
+
+```sh
+pnpm android
+```
+
+#### iOS
+
+Primero instala las dependencias de CocoaPods:
+
+```sh
+cd ios && pod install && cd ..
+```
+
+Luego ejecuta:
+
+```sh
+pnpm ios
+```
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── components/
+│   ├── FAQModal.tsx          # Modal con información y FAQ
+│   └── FAQModal.styles.ts    # Estilos del modal
+├── screens/
+│   ├── ConfigScreen.tsx      # Pantalla principal de configuración
+│   └── ConfigScreen.styles.ts
+└── theme/
+    ├── colors.ts             # Paleta de colores
+    └── typography.ts         # Tipografía y tamaños de fuente
+```
+
+## 🎨 Características
+
+- ✅ Detección de inactividad configurable (1-120 minutos)
+- ✅ Interfaz moderna y limpia
+- ✅ Modal FAQ con ejemplos prácticos
+- ✅ Tema oscuro optimizado
+- ✅ Tipografía adaptable a la fuente del sistema
+
+## 🛠️ Tecnologías
+
+- React Native 0.82
+- TypeScript
+- pnpm (gestor de paquetes)
+- React Native Safe Area Context
+- React Native Community Slider
+
+## 📝 Scripts Disponibles
+
+- `pnpm start` - Inicia Metro bundler
+- `pnpm android` - Ejecuta en Android
+- `pnpm ios` - Ejecuta en iOS
+- `pnpm lint` - Ejecuta ESLint
+- `pnpm test` - Ejecuta tests
+
+## ⚠️ Importante
+
+Este proyecto está configurado para usar **solo pnpm**. Si intentas usar npm o yarn, recibirás un error.
+
+---
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
