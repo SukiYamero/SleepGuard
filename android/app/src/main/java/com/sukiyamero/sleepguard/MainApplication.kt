@@ -1,4 +1,4 @@
-package com.inactivitywatcher
+package com.sukiyamero.sleepguard
 
 import android.app.Application
 import com.facebook.react.PackageList

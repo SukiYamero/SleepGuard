@@ -1,6 +1,7 @@
 {
-  "name": "inactivity-watcher",
-  "version": "0.0.1",
+  "name": "sleepguard",
+  "version": "1.0.0",
+  "description": "Auto-lock your device after inactivity. Save battery while gaming or sleeping.",
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",

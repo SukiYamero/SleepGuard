@@ -1,4 +1,4 @@
-package com.inactivitywatcher
+package com.sukiyamero.sleepguard
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

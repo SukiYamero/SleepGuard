@@ -1,6 +1,8 @@
-# Inactivity Shield
+# SleepGuard: Gaming Battery Saver
 
 Una aplicación React Native para proteger la batería de tu dispositivo detectando periodos de inactividad y retornando automáticamente al home screen.
+
+**Auto-lock your device after inactivity. Save battery while gaming or sleeping.**
 
 ## 🚀 Getting Started
 
@@ -55,6 +57,13 @@ src/
 ├── components/
 │   ├── FAQModal.tsx          # Modal con información y FAQ
 │   └── FAQModal.styles.ts    # Estilos del modal
+├── constants/
+│   └── appConfig.ts          # Constantes de la app (nombre, versión, package)
+├── i18n/
+│   ├── i18n.config.ts        # Configuración de internacionalización
+│   └── locales/
+│       ├── es.ts             # Traducciones en español
+│       └── en.ts             # Traducciones en inglés
 ├── screens/
 │   ├── ConfigScreen.tsx      # Pantalla principal de configuración
 │   └── ConfigScreen.styles.ts
@@ -70,6 +79,8 @@ src/
 - ✅ Modal FAQ con ejemplos prácticos
 - ✅ Tema oscuro optimizado
 - ✅ Tipografía adaptable a la fuente del sistema
+- ✅ Soporte multiidioma (Español/Inglés) con detección automática
+- ✅ Constantes centralizadas para metadata de la app
 
 ## 🛠️ Tecnologías
 
@@ -78,6 +89,8 @@ src/
 - pnpm (gestor de paquetes)
 - React Native Safe Area Context
 - React Native Community Slider
+- i18next + react-i18next
+- react-native-localize
 
 ## 📝 Scripts Disponibles
 
