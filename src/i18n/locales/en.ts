@@ -1,7 +1,8 @@
 export default {
     translation: {
         // Header
-        appName: 'Inactivity Shield',
+        appName: 'SleepGuard',
+        appNameFull: 'SleepGuard: Gaming Battery Saver',
         help: '?',
 
         // Main screen
@@ -45,7 +46,7 @@ export default {
         exampleSteps: {
             step1: 'You\'re playing on your tablet at 11 PM',
             step2: 'You fall asleep without closing the game',
-            step3: 'After {{minutes}} minutes without touching the screen, Inactivity Shield detects inactivity',
+            step3: 'After {{minutes}} minutes without touching the screen, SleepGuard detects inactivity',
             step4: 'The app automatically presses the Home button',
             step5: 'Your tablet turns off according to its settings (e.g., after 2 minutes on home)',
         },
@@ -53,7 +54,7 @@ export default {
 
         // Footer
         version: 'Version {{version}}',
-        appDescription: 'Protects your device\'s battery',
-        copyright: '© 2025',
+        appDescription: 'Auto-lock your device after inactivity. Save battery while gaming or sleeping.',
+        copyright: '© 2025 Sukiyamero',
     },
 };
