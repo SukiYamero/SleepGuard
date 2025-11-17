@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Switch, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Slider from '@react-native-community/slider';
 import { useTranslation } from 'react-i18next';
 import { configScreenStyles as styles } from './ConfigScreen.styles';
 import FAQModal from '../components/FAQModal';
+import { useInactivityMonitoring } from '../hooks/useInactivityMonitoring';
 
 const ConfigScreen = () => {
   const { t } = useTranslation();
-  const [minutes, setMinutes] = useState(25);
-  const [isEnabled, setIsEnabled] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
 
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const {
+    isMonitoring,
+    timeoutMinutes,
+    startMonitoring,
+    stopMonitoring,
+    updateTimeout,
+    resetActivity,
+  } = useInactivityMonitoring();
+
+  const [localMinutes, setLocalMinutes] = useState(timeoutMinutes);
+
+  useEffect(() => {
+    setLocalMinutes(timeoutMinutes);
+  }, [timeoutMinutes]);
+
+  const toggleSwitch = async () =>
+    isMonitoring ? await stopMonitoring() : await startMonitoring();
+
+  const handleSliderChange = (value: number) => {
+    setLocalMinutes(value);
+  };
+
+  const handleSliderComplete = async (value: number) => {
+    await updateTimeout(value);
+    resetActivity(); // Reset timer when user changes the timeout
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,10 +66,10 @@ const ConfigScreen = () => {
           <View style={styles.toggleContainer}>
             <Switch
               trackColor={{ false: '#4a5568', true: '#10b981' }}
-              thumbColor={isEnabled ? '#ffffff' : '#f4f3f4'}
+              thumbColor={isMonitoring ? '#ffffff' : '#f4f3f4'}
               ios_backgroundColor="#4a5568"
               onValueChange={toggleSwitch}
-              value={isEnabled}
+              value={isMonitoring}
               style={styles.switchLarge}
             />
           </View>
@@ -53,9 +77,9 @@ const ConfigScreen = () => {
           {/* Mensaje de estado */}
           <Text style={[
             styles.statusMessage,
-            isEnabled && styles.statusMessageActive
+            isMonitoring && styles.statusMessageActive
           ]}>
-            {isEnabled
+            {isMonitoring
               ? t('monitoringActive')
               : t('monitoringInactive')}
           </Text>
@@ -68,7 +92,7 @@ const ConfigScreen = () => {
           <View style={styles.sliderContainer}>
             <View style={styles.sliderRow}>
               <Text style={styles.sliderLabel}>{t('returnToHomeLabel')}</Text>
-              <Text style={styles.sliderValue}>{minutes} {t('minutes')}</Text>
+              <Text style={styles.sliderValue}>{localMinutes} {t('minutes')}</Text>
             </View>
 
             <Slider
@@ -76,15 +100,16 @@ const ConfigScreen = () => {
               minimumValue={1}
               maximumValue={120}
               step={1}
-              value={minutes}
-              onValueChange={setMinutes}
+              value={localMinutes}
+              onValueChange={handleSliderChange}
+              onSlidingComplete={handleSliderComplete}
               minimumTrackTintColor="#3b82f6"
               maximumTrackTintColor="#4a5568"
               thumbTintColor="#3b82f6"
             />
 
             <Text style={styles.hintText}>
-              {t('hintText', { minutes })}
+              {t('hintText', { minutes: localMinutes })}
             </Text>
           </View>
         </View>
@@ -94,7 +119,7 @@ const ConfigScreen = () => {
       <FAQModal
         visible={showFAQ}
         onClose={() => setShowFAQ(false)}
-        minutes={minutes}
+        minutes={localMinutes}
       />
     </SafeAreaView>
   );

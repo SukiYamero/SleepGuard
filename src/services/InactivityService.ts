@@ -1,0 +1,262 @@
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import { AppState, AppStateStatus } from 'react-native';
+
+interface ServiceOptions {
+    timeoutMinutes: number;
+    onInactivityDetected: () => void;
+    onServiceStopped?: () => void;
+}
+
+class InactivityService {
+    private static instance: InactivityService;
+    private isRunning = false;
+    private lastActivityTime = Date.now();
+    private timeoutMinutes = 5;
+    private onInactivityCallback?: () => void;
+    private onServiceStoppedCallback?: () => void;
+    private appStateSubscription?: any;
+    private checkInterval?: ReturnType<typeof setInterval>;
+
+    private constructor() {
+        // Setup notification action handler
+        this.setupNotificationHandler();
+    }
+
+    public static getInstance(): InactivityService {
+        if (!InactivityService.instance) {
+            InactivityService.instance = new InactivityService();
+        }
+        return InactivityService.instance;
+    }
+
+    private setupNotificationHandler() {
+        // Handle notification actions (like Stop button)
+        notifee.onForegroundEvent(({ type, detail }) => {
+            if (type === EventType.ACTION_PRESS && detail.pressAction?.id === 'stop-service') {
+                this.stop();
+            }
+        });
+
+        notifee.onBackgroundEvent(async ({ type, detail }) => {
+            if (type === EventType.ACTION_PRESS && detail.pressAction?.id === 'stop-service') {
+                await this.stop();
+            }
+        });
+    }
+
+    private async createNotificationChannel() {
+        await notifee.createChannel({
+            id: 'sleepguard-service',
+            name: 'SleepGuard Service',
+            importance: AndroidImportance.LOW,
+            description: 'Monitoring inactivity in the background',
+        });
+    }
+
+    private async showServiceNotification() {
+        try {
+            await this.createNotificationChannel();
+
+            await notifee.displayNotification({
+                id: 'sleepguard-monitoring',
+                title: '🛡️ SleepGuard Active',
+                body: `Monitoring inactivity (${this.timeoutMinutes} min timeout)`,
+                android: {
+                    channelId: 'sleepguard-service',
+                    importance: AndroidImportance.LOW,
+                    ongoing: true,
+                    autoCancel: false,
+                    smallIcon: 'ic_small_icon', // Using default notification icon
+                    color: '#3b82f6',
+                    asForegroundService: true,
+                    actions: [
+                        {
+                            title: '⏸️ Stop',
+                            pressAction: {
+                                id: 'stop-service',
+                            },
+                        },
+                    ],
+                },
+            });
+            console.log('[SleepGuard] Notification displayed successfully');
+        } catch (error) {
+            console.error('[SleepGuard] Error showing notification:', error);
+        }
+    }
+
+    private async updateNotification(message: string) {
+        try {
+            await notifee.displayNotification({
+                id: 'sleepguard-monitoring',
+                title: '🛡️ SleepGuard Active',
+                body: message,
+                android: {
+                    channelId: 'sleepguard-service',
+                    importance: AndroidImportance.LOW,
+                    ongoing: true,
+                    autoCancel: false,
+                    smallIcon: 'ic_launcher',
+                    color: '#3b82f6',
+                    asForegroundService: true,
+                    actions: [
+                        {
+                            title: '⏸️ Stop',
+                            pressAction: {
+                                id: 'stop-service',
+                            },
+                        },
+                    ],
+                },
+            });
+        } catch (error) {
+            console.error('[SleepGuard] Error updating notification:', error);
+        }
+    }
+
+    private handleAppStateChange = (nextAppState: AppStateStatus) => {
+        console.log('[SleepGuard] App state changed to:', nextAppState);
+        // Reset timer on any app state change (user interaction)
+        if (nextAppState === 'active') {
+            this.resetTimer();
+        }
+    };
+
+    private resetTimer() {
+        this.lastActivityTime = Date.now();
+        console.log('[SleepGuard] Timer reset');
+    }
+
+    private checkInactivity = () => {
+        try {
+            const now = Date.now();
+            const elapsedMinutes = (now - this.lastActivityTime) / (1000 * 60);
+            const remainingMinutes = Math.max(0, this.timeoutMinutes - elapsedMinutes);
+
+            console.log(`[SleepGuard] Remaining: ${remainingMinutes.toFixed(1)} min`);
+
+            // Update notification with remaining time
+            if (remainingMinutes > 0) {
+                this.updateNotification(
+                    `${remainingMinutes.toFixed(1)} min remaining`
+                );
+            }
+
+            // Check if timeout reached
+            if (elapsedMinutes >= this.timeoutMinutes) {
+                console.log('[SleepGuard] Inactivity timeout reached!');
+                if (this.onInactivityCallback) {
+                    this.onInactivityCallback();
+                }
+                // Don't reset timer - let the callback handle stopping the service
+            }
+        } catch (error) {
+            console.error('[SleepGuard] Error checking inactivity:', error);
+        }
+    };
+
+    public async start(options: ServiceOptions): Promise<void> {
+        if (this.isRunning) {
+            console.log('[SleepGuard] Service already running');
+            return;
+        }
+
+        this.timeoutMinutes = options.timeoutMinutes;
+        this.onInactivityCallback = options.onInactivityDetected;
+        this.onServiceStoppedCallback = options.onServiceStopped;
+        this.lastActivityTime = Date.now();
+
+        try {
+            console.log('[SleepGuard] Starting service...');
+
+            // Show foreground notification (this automatically starts foreground service)
+            await this.showServiceNotification();
+
+            // Register the foreground service with notifee (must be after showing notification)
+            notifee.registerForegroundService((_notification) => {
+                return new Promise(() => {
+                    // This promise should never resolve to keep the service running
+                    console.log('[SleepGuard] Foreground service registered');
+                });
+            });
+
+            // Listen to app state changes
+            this.appStateSubscription = AppState.addEventListener(
+                'change',
+                this.handleAppStateChange
+            );
+
+            // Check inactivity every 10 seconds
+            this.checkInterval = setInterval(() => {
+                this.checkInactivity();
+            }, 10000); // Check every 10 seconds
+
+            this.isRunning = true;
+            console.log('[SleepGuard] Service started successfully');
+        } catch (error) {
+            console.error('[SleepGuard] Failed to start service:', error);
+            throw error;
+        }
+    }
+
+    public async stop(): Promise<void> {
+        if (!this.isRunning) {
+            console.log('[SleepGuard] Service not running');
+            return;
+        }
+
+        try {
+            console.log('[SleepGuard] Stopping service...');
+
+            // Clear interval
+            if (this.checkInterval) {
+                clearInterval(this.checkInterval);
+                this.checkInterval = undefined;
+            }
+
+            // Remove app state listener
+            if (this.appStateSubscription) {
+                this.appStateSubscription.remove();
+                this.appStateSubscription = undefined;
+            }
+
+            // Cancel notification (this stops the foreground service)
+            await notifee.cancelNotification('sleepguard-monitoring');
+
+            // Stop the foreground service
+            await notifee.stopForegroundService();
+
+            this.isRunning = false;
+
+            // Notify UI that service has stopped
+            if (this.onServiceStoppedCallback) {
+                this.onServiceStoppedCallback();
+            }
+
+            console.log('[SleepGuard] Service stopped successfully');
+        } catch (error) {
+            console.error('[SleepGuard] Failed to stop service:', error);
+            throw error;
+        }
+    }
+
+    public async updateTimeout(minutes: number): Promise<void> {
+        this.timeoutMinutes = minutes;
+        if (this.isRunning) {
+            // Update notification with new timeout
+            await this.updateNotification(
+                `Monitoring inactivity (${minutes} min timeout)`
+            );
+        }
+    }
+
+    public isServiceRunning(): boolean {
+        return this.isRunning;
+    }
+
+    public resetActivity(): void {
+        this.resetTimer();
+    }
+}
+
+export default InactivityService.getInstance();
