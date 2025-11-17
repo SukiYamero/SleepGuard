@@ -4,18 +4,19 @@ import { useTranslation } from 'react-i18next';
 import InactivityService from '../services/InactivityService';
 import AccessibilityService from '../services/AccessibilityService';
 
-interface AlertConfig {
+export interface AlertConfig {
     visible: boolean;
     title: string;
     message: string;
+    icon?: string;
+    benefits?: string[];
+    steps?: string[];
     buttons: Array<{
         text: string;
         onPress: () => void;
-        style?: 'default' | 'cancel' | 'primary';
+        style?: 'default' | 'cancel' | 'destructive';
     }>;
-}
-
-export const useInactivityMonitoring = () => {
+}export const useInactivityMonitoring = () => {
     const { t } = useTranslation();
     const [isMonitoring, setIsMonitoring] = useState(false);
     const [timeoutMinutes, setTimeoutMinutes] = useState(1);
@@ -24,17 +25,14 @@ export const useInactivityMonitoring = () => {
         visible: false,
         title: '',
         message: '',
+        benefits: [],
+        steps: [],
         buttons: [],
-    });
-
-    useEffect(() => {
-        // Check initial state
+    }); useEffect(() => {
         setIsMonitoring(InactivityService.isServiceRunning());
 
-        // Check accessibility service status
         checkAccessibilityStatus();
 
-        // Cleanup on unmount
         return () => {
             if (InactivityService.isServiceRunning()) {
                 InactivityService.stop().catch(console.error);
@@ -57,7 +55,6 @@ export const useInactivityMonitoring = () => {
     const handleInactivityDetected = useCallback(async () => {
         console.log('[Hook] Inactivity detected! Should navigate to home...');
 
-        // Stop the monitoring service first
         await InactivityService.stop();
         setIsMonitoring(false);
 
@@ -80,7 +77,7 @@ export const useInactivityMonitoring = () => {
             return true;
         }
 
-        // Android 13 (API 33) and above requires explicit notification permission
+        // (API 33) and above requires explicit notification permission
         if (Platform.Version >= 33) {
             try {
                 const granted = await PermissionsAndroid.request(
@@ -124,26 +121,26 @@ export const useInactivityMonitoring = () => {
             return;
         }
 
-        // Check accessibility service first
         const isAccessibilityEnabled = await checkAccessibilityStatus();
 
         if (!isAccessibilityEnabled) {
             setAlertConfig({
                 visible: true,
-                title: t('accessibilityRequired.title'),
-                message: t('accessibilityRequired.message'),
+                title: t('accessibility.permissionTitle'),
+                message: t('accessibility.permissionMessage'),
+                icon: '👆',
+                benefits: [
+                    t('accessibility.benefit1'),
+                    t('accessibility.benefit2'),
+                ],
+                steps: [
+                    t('accessibility.step1'),
+                    t('accessibility.step2'),
+                    t('accessibility.step3'),
+                ],
                 buttons: [
                     {
-                        text: t('accessibilityRequired.remindLater'),
-                        style: 'cancel',
-                        onPress: () => {
-                            console.log('[Hook] User chose to continue without accessibility');
-                            setAlertConfig(prev => ({ ...prev, visible: false }));
-                        }
-                    },
-                    {
-                        text: t('accessibilityRequired.enableNow'),
-                        style: 'primary',
+                        text: t('accessibility.enableButton'),
                         onPress: async () => {
                             setAlertConfig(prev => ({ ...prev, visible: false }));
                             try {
@@ -152,14 +149,21 @@ export const useInactivityMonitoring = () => {
                                 console.error('[Hook] Could not open accessibility settings:', error);
                             }
                         },
+                        style: 'default',
+                    },
+                    {
+                        text: t('accessibility.remindLater'),
+                        onPress: () => {
+                            console.log('[Hook] User chose to continue without accessibility');
+                            setAlertConfig(prev => ({ ...prev, visible: false }));
+                        },
+                        style: 'cancel',
                     },
                 ],
             });
-            // Don't return - allow monitoring with fallback methods
         }
 
         try {
-            // Request notification permission first (Android 13+)
             const hasPermission = await requestNotificationPermission();
             if (!hasPermission) {
                 return;

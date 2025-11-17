@@ -57,18 +57,16 @@ export default {
         },
 
         // Accessibility Service
-        accessibilityRequired: {
-            title: '🔍 Activar Detección de Actividad',
-            message: 'Para identificar correctamente tu inactividad, SleepGuard necesita detectar cuando interactúas con tu dispositivo (toques, deslizamientos, etc.).\n\n' +
-                '✓ Detecta actividad en todas las apps\n' +
-                '✓ Funciona en segundo plano\n\n' +
-                '📱 Para activarlo:\n' +
-                '1. Toca "Activar Ahora" para abrir Ajustes\n' +
-                '2. Busca "SleepGuard" en la lista\n' +
-                '3. Activa el interruptor\n' +
-                '4. Acepta el permiso cuando Android te lo solicite',
-            remindLater: 'Recordar Después',
-            enableNow: 'Activar Ahora',
+        accessibility: {
+            permissionTitle: 'Enable Activity Detection',
+            permissionMessage: 'To correctly identify your inactivity, the app needs to detect when you interact with your device (touches, swipes, etc.).',
+            benefit1: 'Detects activity across all apps',
+            benefit2: 'Works in the background',
+            step1: 'Tap "Enable Now" to open Settings',
+            step2: 'Find "App Name" in the list',
+            step3: 'Toggle the switch on',
+            enableButton: 'Enable Now',
+            remindLater: 'Remind Later',
         },
 
         // Practical Example

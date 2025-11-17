@@ -37,7 +37,7 @@ const ConfigScreen = () => {
 
   const handleSliderComplete = async (value: number) => {
     await updateTimeout(value);
-    resetActivity(); // Reset timer when user changes the timeout
+    resetActivity();
   };
 
   return (
@@ -52,19 +52,16 @@ const ConfigScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Centro con icono y toggle */}
         <View style={styles.centerSection}>
-          {/* Icono central */}
+
           <View style={styles.iconContainer}>
             <View style={styles.iconInner}>
               <Text style={styles.iconText}>📡</Text>
             </View>
           </View>
 
-          {/* Título */}
           <Text style={styles.mainTitle}>{t('inactivityDetection')}</Text>
 
-          {/* Toggle grande */}
           <View style={styles.toggleContainer}>
             <Switch
               trackColor={{ false: '#4a5568', true: '#10b981' }}
@@ -76,7 +73,6 @@ const ConfigScreen = () => {
             />
           </View>
 
-          {/* Mensaje de estado */}
           <Text style={[
             styles.statusMessage,
             isMonitoring && styles.statusMessageActive
@@ -87,7 +83,6 @@ const ConfigScreen = () => {
           </Text>
         </View>
 
-        {/* Sección de ajustes */}
         <View style={styles.adjustmentsSection}>
           <Text style={styles.sectionTitle}>{t('settings')}</Text>
 
@@ -117,18 +112,19 @@ const ConfigScreen = () => {
         </View>
       </View>
 
-      {/* Modal FAQ */}
       <FAQModal
         visible={showFAQ}
         onClose={() => setShowFAQ(false)}
         minutes={localMinutes}
       />
 
-      {/* Custom Alert for Accessibility */}
       <CustomAlert
         visible={alertConfig.visible}
         title={alertConfig.title}
         message={alertConfig.message}
+        icon={alertConfig.icon}
+        benefits={alertConfig.benefits}
+        steps={alertConfig.steps}
         buttons={alertConfig.buttons}
       />
     </SafeAreaView>
