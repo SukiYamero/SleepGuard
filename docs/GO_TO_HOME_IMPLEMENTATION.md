@@ -30,6 +30,7 @@ fun goToHome(promise: Promise) {
 - Crea un Intent con `ACTION_MAIN` y `CATEGORY_HOME`
 - Flag `NEW_TASK` para lanzar como nueva tarea
 - Devuelve Promise para manejar éxito/error
+- **Nota:** No necesita `addListener`/`removeListeners` porque no emite eventos
 
 ### 2. Integración en InactivityService
 

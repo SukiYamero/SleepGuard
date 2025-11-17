@@ -30,14 +30,4 @@ class NavigateToHomeModule(reactContext: ReactApplicationContext) : ReactContext
             promise.reject("NAVIGATION_ERROR", "Failed to navigate to home screen: ${e.message}", e)
         }
     }
-
-    @ReactMethod
-    fun addListener(eventName: String) {
-        // Required for NativeEventEmitter compatibility
-    }
-
-    @ReactMethod
-    fun removeListeners(count: Int) {
-        // Required for NativeEventEmitter compatibility
-    }
 }
