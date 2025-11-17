@@ -117,8 +117,16 @@ class InactivityService {
 
     private handleAppStateChange = (nextAppState: AppStateStatus) => {
         console.log('[SleepGuard] App state changed to:', nextAppState);
-        // Reset timer on any app state change (user interaction)
-        this.resetTimer();
+
+        // Only reset timer when SleepGuard comes to foreground
+        // This indicates user interaction with OUR app
+        // Don't reset when going to background, as that's not user activity
+        if (nextAppState === 'active') {
+            console.log('[SleepGuard] SleepGuard brought to foreground - user interaction');
+            this.resetTimer();
+        } else {
+            console.log('[SleepGuard] SleepGuard went to background - not resetting timer');
+        }
     };
 
     private handleScreenOn = () => {
@@ -141,7 +149,8 @@ class InactivityService {
 
     private handleAccessibilityActivity = () => {
         // This is called when Accessibility Service detects user activity
-        console.log('[SleepGuard] 🎯 Accessibility detected user activity');
+        const now = new Date().toISOString().substr(11, 12);
+        console.log(`[SleepGuard] 🎯 [${now}] Accessibility detected user activity`);
         this.resetTimer();
     };
 
@@ -236,10 +245,12 @@ class InactivityService {
                 console.warn('[SleepGuard] ⚠️ Could not start screen state monitoring (will use AppState only):', screenError);
             }
 
-            // Check inactivity every 10 seconds
+            // Optimized: Check every 30 seconds (2 times per minute)
+            // Perfect for 10-30 minute timeouts, reduces CPU usage by 67%
+            // Timer resets instantly on activity, this only updates notification
             this.checkInterval = setInterval(() => {
                 this.checkInactivity();
-            }, 10000);
+            }, 30000);
 
             this.isRunning = true;
             console.log('[SleepGuard] Service started successfully');

@@ -63,7 +63,7 @@ export default {
             benefit1: 'Detects activity across all apps',
             benefit2: 'Works in the background',
             step1: 'Tap "Enable Now" to open Settings',
-            step2: 'Find "App Name" in the list',
+            step2: 'Find "{{appName}}" in the list',
             step3: 'Toggle the switch on',
             enableButton: 'Enable Now',
             remindLater: 'Remind Later',

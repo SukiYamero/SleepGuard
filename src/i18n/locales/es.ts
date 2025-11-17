@@ -63,7 +63,7 @@ export default {
             benefit1: 'Detecta actividad en todas las apps',
             benefit2: 'Funciona en segundo plano',
             step1: 'Toca "Activar Ahora" para abrir Ajustes',
-            step2: 'Busca "SleepGuard" en la lista',
+            step2: 'Busca "{{appName}}" en la lista',
             step3: 'Activa el interruptor',
             enableButton: 'Activar Ahora',
             remindLater: 'Recordar Después',

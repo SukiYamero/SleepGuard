@@ -30,7 +30,7 @@ export const useInactivityMonitoring = () => {
         benefits: [],
         steps: [],
         buttons: [],
-    }); 
+    });
 
     useEffect(() => {
         setIsMonitoring(InactivityService.isServiceRunning());
@@ -139,7 +139,7 @@ export const useInactivityMonitoring = () => {
                 ],
                 steps: [
                     t('accessibility.step1'),
-                    t('accessibility.step2'),
+                    t('accessibility.step2', { appName: t('appName') }),
                     t('accessibility.step3'),
                 ],
                 buttons: [

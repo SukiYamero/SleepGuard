@@ -33,20 +33,25 @@ class ScreenStateModule(reactContext: ReactApplicationContext) : ReactContextBas
 
         screenStateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                android.util.Log.d("ScreenStateModule", "📨 Broadcast received: ${intent?.action}")
                 when (intent?.action) {
                     Intent.ACTION_SCREEN_ON -> {
+                        android.util.Log.d("ScreenStateModule", "🔆 Sending onScreenOn event to JS")
                         sendEvent("onScreenOn")
                     }
                     Intent.ACTION_SCREEN_OFF -> {
                         // Screen turned off - device locked or sleeping
+                        android.util.Log.d("ScreenStateModule", "🌙 Sending onScreenOff event to JS")
                         sendEvent("onScreenOff")
                     }
                     Intent.ACTION_USER_PRESENT -> {
                         // User unlocked the device
+                        android.util.Log.d("ScreenStateModule", "🔓 Sending onUserPresent event to JS")
                         sendEvent("onUserPresent")
                     }
                     InactivityAccessibilityService.ACTION_USER_ACTIVITY -> {
                         // Accessibility service detected user activity
+                        android.util.Log.d("ScreenStateModule", "🎯 Sending onAccessibilityActivity event to JS")
                         sendEvent("onAccessibilityActivity")
                     }
                 }
