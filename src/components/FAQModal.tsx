@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, Modal, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { faqModalStyles as styles } from './FAQModal.styles';
+import AccordionItem from './AccordionItem';
 
 interface FAQModalProps {
     visible: boolean;
@@ -32,33 +34,33 @@ const FAQModal: React.FC<FAQModalProps> = ({ visible, onClose, minutes }) => {
                             </TouchableOpacity>
                         </View>
 
-                        {/* Contenido FAQ */}
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.whatDoesItDo.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.whatDoesItDo.answer')}
-                            </Text>
-                        </View>
+                        {/* Contenido FAQ con Accordion */}
+                        <View style={styles.faqContainer}>
+                            <AccordionItem
+                                question={t('faq.whatDoesItDo.question')}
+                                answer={t('faq.whatDoesItDo.answer')}
+                                isExpanded={true}
+                            />
 
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.worksInBackground.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.worksInBackground.answer')}
-                            </Text>
-                        </View>
+                            <AccordionItem
+                                question={t('faq.worksInBackground.question')}
+                                answer={t('faq.worksInBackground.answer')}
+                            />
 
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.batteryConsumption.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.batteryConsumption.answer')}
-                            </Text>
-                        </View>
+                            <AccordionItem
+                                question={t('faq.batteryConsumption.question')}
+                                answer={t('faq.batteryConsumption.answer')}
+                            />
 
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.permissions.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.permissions.answer')}
-                            </Text>
+                            <AccordionItem
+                                question={t('faq.permissions.question')}
+                                answer={t('faq.permissions.answer')}
+                            />
+
+                            <AccordionItem
+                                question={t('faq.accessibilityPermission.question')}
+                                answer={t('faq.accessibilityPermission.answer')}
+                            />
                         </View>
 
                         {/* Caso de uso ejemplo */}
@@ -70,42 +72,54 @@ const FAQModal: React.FC<FAQModalProps> = ({ visible, onClose, minutes }) => {
                                 </Text>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>1️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-one" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step1')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>2️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-two" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step2')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>3️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-3" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step3', { minutes })}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>4️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-4" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step4')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>5️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-5" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step5')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleResult}>
-                                    <Text style={styles.resultIcon}>✅</Text>
+                                    <View style={styles.resultIconContainer}>
+                                        <MaterialIcons name="check-circle" size={24} color="#4ade80" />
+                                    </View>
                                     <Text style={styles.resultText}>
                                         {t('exampleResult')}
                                     </Text>

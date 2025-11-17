@@ -41,6 +41,9 @@ export const faqModalStyles = StyleSheet.create({
         color: colors.text.primary,
         fontWeight: fontWeights.bold,
     },
+    faqContainer: {
+        marginBottom: 24,
+    },
     faqSection: {
         marginBottom: 24,
     },
@@ -83,6 +86,14 @@ export const faqModalStyles = StyleSheet.create({
         alignItems: 'flex-start',
         marginBottom: 12,
     },
+    stepIconContainer: {
+        width: 28,
+        height: 28,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 8,
+        marginTop: 2,
+    },
     stepNumber: {
         fontSize: 18,
         marginRight: 8,
@@ -101,6 +112,13 @@ export const faqModalStyles = StyleSheet.create({
         padding: 12,
         marginTop: 8,
         alignItems: 'flex-start',
+    },
+    resultIconContainer: {
+        width: 28,
+        height: 28,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 8,
     },
     resultIcon: {
         fontSize: 20,

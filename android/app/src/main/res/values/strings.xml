@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SleepGuard</string>
+    <string name="accessibility_service_description">SleepGuard monitors user activity to detect inactivity. This service detects touches, clicks, and scrolls across all apps to accurately determine when you are inactive. Your privacy is protected - we only detect activity, not content.</string>
 </resources>
