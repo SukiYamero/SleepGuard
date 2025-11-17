@@ -58,15 +58,15 @@ export default {
 
         // Accessibility Service
         accessibility: {
-            permissionTitle: 'Enable Activity Detection',
-            permissionMessage: 'To correctly identify your inactivity, the app needs to detect when you interact with your device (touches, swipes, etc.).',
-            benefit1: 'Detects activity across all apps',
-            benefit2: 'Works in the background',
-            step1: 'Tap "Enable Now" to open Settings',
-            step2: 'Find "App Name" in the list',
-            step3: 'Toggle the switch on',
-            enableButton: 'Enable Now',
-            remindLater: 'Remind Later',
+            permissionTitle: 'Activar Detección de Actividad',
+            permissionMessage: 'Para identificar correctamente tu inactividad, la app necesita detectar cuando interactúas con tu dispositivo (toques, deslizamientos, etc.).',
+            benefit1: 'Detecta actividad en todas las apps',
+            benefit2: 'Funciona en segundo plano',
+            step1: 'Toca "Activar Ahora" para abrir Ajustes',
+            step2: 'Busca "SleepGuard" en la lista',
+            step3: 'Activa el interruptor',
+            enableButton: 'Activar Ahora',
+            remindLater: 'Recordar Después',
         },
 
         // Practical Example
