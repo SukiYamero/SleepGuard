@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Platform, Alert, PermissionsAndroid } from 'react-native';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Platform, Alert, PermissionsAndroid, AppState, AppStateStatus } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import InactivityService from '../services/InactivityService';
 import AccessibilityService from '../services/AccessibilityService';
@@ -31,6 +31,19 @@ export const useInactivityMonitoring = () => {
         steps: [],
         buttons: [],
     });
+    const appState = useRef<AppStateStatus>(AppState.currentState);
+
+    const checkAccessibilityStatus = useCallback(async () => {
+        try {
+            const enabled = await AccessibilityService.isEnabled();
+            setAccessibilityEnabled(enabled);
+            return enabled;
+        } catch (error) {
+            console.warn('[Hook] Could not check accessibility status:', error);
+            setAccessibilityEnabled(false);
+            return false;
+        }
+    }, []);
 
     useEffect(() => {
         setIsMonitoring(InactivityService.isServiceRunning());
@@ -42,19 +55,37 @@ export const useInactivityMonitoring = () => {
                 InactivityService.stop().catch(console.error);
             }
         };
-    }, []);
+    }, [checkAccessibilityStatus]);
 
-    const checkAccessibilityStatus = async () => {
-        try {
-            const enabled = await AccessibilityService.isEnabled();
-            setAccessibilityEnabled(enabled);
-            return enabled;
-        } catch (error) {
-            console.warn('[Hook] Could not check accessibility status:', error);
-            setAccessibilityEnabled(false);
-            return false;
-        }
-    };
+    // Monitor app state to detect when user returns from Settings
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', async (nextAppState: AppStateStatus) => {
+            // Detect when app comes to foreground
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                console.log('[Hook] App came to foreground - checking accessibility status');
+
+                // If monitoring is enabled, check if accessibility is still granted
+                if (isMonitoring) {
+                    const isAccessibilityStillEnabled = await checkAccessibilityStatus();
+
+                    if (!isAccessibilityStillEnabled) {
+                        console.log('[Hook] User returned without enabling accessibility - stopping monitoring');
+                        // User went to Settings but didn't enable accessibility
+                        await InactivityService.stop();
+                        setIsMonitoring(false);
+                    } else {
+                        console.log('[Hook] Accessibility is enabled - monitoring continues');
+                    }
+                }
+            }
+
+            appState.current = nextAppState;
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, [isMonitoring, checkAccessibilityStatus]);
 
     const handleInactivityDetected = useCallback(async () => {
         console.log('[Hook] ⏰ Inactivity detected! Navigating to home and stopping service...');
@@ -151,15 +182,20 @@ export const useInactivityMonitoring = () => {
                     {
                         text: t('accessibility.remindLater'),
                         onPress: () => {
-                            console.log('[Hook] User chose to continue without accessibility');
+                            console.log('[Hook] User chose to remind later - stopping monitoring');
                             setAlertConfig(prev => ({ ...prev, visible: false }));
+                            // Ensure toggle goes back to OFF if user declined
+                            setIsMonitoring(false);
                         },
                         style: 'cancel',
                     },
                 ],
             });
+            // Don't start the service without accessibility permission
+            return;
         }
 
+        // Only proceed if accessibility is enabled
         try {
             const hasPermission = await requestNotificationPermission();
             if (!hasPermission) {
@@ -179,7 +215,7 @@ export const useInactivityMonitoring = () => {
                 'Failed to start background monitoring. Please check permissions.'
             );
         }
-    }, [timeoutMinutes, handleInactivityDetected, handleServiceStopped, requestNotificationPermission, t]);
+    }, [timeoutMinutes, handleInactivityDetected, handleServiceStopped, requestNotificationPermission, t, checkAccessibilityStatus]);
 
     const stopMonitoring = useCallback(async () => {
         try {

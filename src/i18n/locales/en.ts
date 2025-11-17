@@ -9,6 +9,7 @@ export default {
         inactivityDetection: 'Inactivity\nDetection',
         monitoringActive: 'Monitoring is running in the background.',
         monitoringInactive: 'Monitoring is disabled.',
+        accessibilityRequired: '⚠️ Accessibility permission required to activate',
 
         // Settings
         settings: 'Settings',

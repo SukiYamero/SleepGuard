@@ -91,6 +91,10 @@ export const configScreenStyles = StyleSheet.create({
         color: '#10b981',
         fontWeight: fontWeights.medium,
     },
+    statusMessageDisabled: {
+        color: '#ef4444',
+        fontWeight: fontWeights.medium,
+    },
     adjustmentsSection: {
         marginTop: 30,
     },

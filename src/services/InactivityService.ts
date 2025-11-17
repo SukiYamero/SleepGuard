@@ -178,7 +178,20 @@ class InactivityService {
 
                 // Navigate to home screen
                 console.log('[SleepGuard] 🏠 Navigating to home screen...');
-                await NavigateToHomeModule.goToHome();
+                const navigationSuccess = await NavigateToHomeModule.goToHome();
+
+                if (!navigationSuccess) {
+                    // Navigation failed - log error prominently and show notification
+                    console.error('[SleepGuard] ❌ CRITICAL: Failed to navigate to home screen!');
+                    console.error('[SleepGuard] ❌ User may not see device lock as expected');
+
+                    // Update notification to inform user of the issue
+                    await this.updateNotification(
+                        '⚠️ Navigation failed - Please check app permissions'
+                    );
+                } else {
+                    console.log('[SleepGuard] ✅ Successfully navigated to home screen');
+                }
 
                 // Call the callback (if provided) for any additional actions
                 if (this.onInactivityCallback) {

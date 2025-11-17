@@ -13,7 +13,8 @@ class NavigateToHomeService {
      */
     async goToHome(): Promise<boolean> {
         if (!NavigateToHomeModule) {
-            console.error('[NavigateToHome] ❌ Native module not available');
+            console.error('[NavigateToHome] ❌ CRITICAL: Native module not available');
+            console.error('[NavigateToHome] ❌ Please rebuild the app with: pnpm run android');
             return false;
         }
 
@@ -23,7 +24,8 @@ class NavigateToHomeService {
             console.log('[NavigateToHome] ✅ Successfully navigated to home');
             return result;
         } catch (error) {
-            console.error('[NavigateToHome] ❌ Error navigating to home:', error);
+            console.error('[NavigateToHome] ❌ CRITICAL: Error navigating to home:', error);
+            console.error('[NavigateToHome] ❌ This may indicate a system-level issue');
             return false;
         }
     }
