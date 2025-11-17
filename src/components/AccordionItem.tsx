@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { accordionStyles as styles } from './AccordionItem.styles';
 
-// Enable LayoutAnimation on Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+// Enable LayoutAnimation on Android (only in old architecture)
+if (
+    Platform.OS === 'android' &&
+    UIManager.setLayoutAnimationEnabledExperimental &&
+    !(globalThis as any).nativeFabricUIManager
+) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 

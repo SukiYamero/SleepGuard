@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Modal, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { faqModalStyles as styles } from './FAQModal.styles';
 import AccordionItem from './AccordionItem';
 
@@ -71,42 +72,54 @@ const FAQModal: React.FC<FAQModalProps> = ({ visible, onClose, minutes }) => {
                                 </Text>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>1️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-one" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step1')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>2️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-two" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step2')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>3️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-3" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step3', { minutes })}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>4️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-4" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step4')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleStep}>
-                                    <Text style={styles.stepNumber}>5️⃣</Text>
+                                    <View style={styles.stepIconContainer}>
+                                        <MaterialIcons name="looks-5" size={24} color="#5b8ef4" />
+                                    </View>
                                     <Text style={styles.stepText}>
                                         {t('exampleSteps.step5')}
                                     </Text>
                                 </View>
 
                                 <View style={styles.exampleResult}>
-                                    <Text style={styles.resultIcon}>✅</Text>
+                                    <View style={styles.resultIconContainer}>
+                                        <MaterialIcons name="check-circle" size={24} color="#4ade80" />
+                                    </View>
                                     <Text style={styles.resultText}>
                                         {t('exampleResult')}
                                     </Text>
