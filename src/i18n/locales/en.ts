@@ -17,8 +17,8 @@ export default {
         hintText: 'The app will return to home after {{minutes}} minute(s) of inactivity.\nYour device will turn off according to its normal settings.',
 
         // FAQ Modal
-        howItWorks: 'ℹ️ How does it work?',
-        close: '✕',
+        howItWorks: '💬 How does it work?',
+        close: '×',
 
         // FAQ Questions
         faq: {
@@ -38,6 +38,37 @@ export default {
                 question: 'What permissions does it need?',
                 answer: 'The app requires accessibility permissions to detect inactivity and simulate pressing the Home button.',
             },
+            accessibilityPermission: {
+                question: '🔐 Why does it need Accessibility access?',
+                answer: 'SleepGuard needs this permission to:\n\n' +
+                    '• Detect when you touch or swipe the screen\n' +
+                    '• Know if you\'re using other apps\n' +
+                    '• Correctly identify your inactivity\n\n' +
+                    'IMPORTANT: This permission is per-app, NOT global. Only SleepGuard can detect your activity, it doesn\'t affect other apps.\n\n' +
+                    '📱 How to enable it:\n' +
+                    '1. Go to Settings → Accessibility\n' +
+                    '2. Look for "Installed services" or "Downloaded services"\n' +
+                    '3. Select "SleepGuard"\n' +
+                    '4. Toggle the switch on\n' +
+                    '5. Confirm when Android asks\n\n' +
+                    '🔓 How to disable it:\n' +
+                    'Follow the same steps and toggle the switch off. You can enable and disable it whenever you want.',
+            },
+        },
+
+        // Accessibility Service
+        accessibilityRequired: {
+            title: '🔍 Enable Activity Detection',
+            message: 'To correctly identify your inactivity, SleepGuard needs to detect when you interact with your device (touches, swipes, etc.).\n\n' +
+                '✓ Detects activity across all apps\n' +
+                '✓ Works in background\n\n' +
+                '📱 To enable it:\n' +
+                '1. Tap "Enable Now" to open Settings\n' +
+                '2. Find "SleepGuard" in the list\n' +
+                '3. Toggle the switch on\n' +
+                '4. Accept the permission when Android requests it',
+            remindLater: 'Remind Later',
+            enableNow: 'Enable Now',
         },
 
         // Practical Example

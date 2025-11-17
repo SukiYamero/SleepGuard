@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Modal, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { faqModalStyles as styles } from './FAQModal.styles';
+import AccordionItem from './AccordionItem';
 
 interface FAQModalProps {
     visible: boolean;
@@ -32,33 +33,33 @@ const FAQModal: React.FC<FAQModalProps> = ({ visible, onClose, minutes }) => {
                             </TouchableOpacity>
                         </View>
 
-                        {/* Contenido FAQ */}
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.whatDoesItDo.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.whatDoesItDo.answer')}
-                            </Text>
-                        </View>
+                        {/* Contenido FAQ con Accordion */}
+                        <View style={styles.faqContainer}>
+                            <AccordionItem
+                                question={t('faq.whatDoesItDo.question')}
+                                answer={t('faq.whatDoesItDo.answer')}
+                                isExpanded={true}
+                            />
 
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.worksInBackground.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.worksInBackground.answer')}
-                            </Text>
-                        </View>
+                            <AccordionItem
+                                question={t('faq.worksInBackground.question')}
+                                answer={t('faq.worksInBackground.answer')}
+                            />
 
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.batteryConsumption.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.batteryConsumption.answer')}
-                            </Text>
-                        </View>
+                            <AccordionItem
+                                question={t('faq.batteryConsumption.question')}
+                                answer={t('faq.batteryConsumption.answer')}
+                            />
 
-                        <View style={styles.faqSection}>
-                            <Text style={styles.faqQuestion}>{t('faq.permissions.question')}</Text>
-                            <Text style={styles.faqAnswer}>
-                                {t('faq.permissions.answer')}
-                            </Text>
+                            <AccordionItem
+                                question={t('faq.permissions.question')}
+                                answer={t('faq.permissions.answer')}
+                            />
+
+                            <AccordionItem
+                                question={t('faq.accessibilityPermission.question')}
+                                answer={t('faq.accessibilityPermission.answer')}
+                            />
                         </View>
 
                         {/* Caso de uso ejemplo */}

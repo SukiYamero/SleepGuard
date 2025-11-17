@@ -5,6 +5,7 @@ import Slider from '@react-native-community/slider';
 import { useTranslation } from 'react-i18next';
 import { configScreenStyles as styles } from './ConfigScreen.styles';
 import FAQModal from '../components/FAQModal';
+import CustomAlert from '../components/CustomAlert';
 import { useInactivityMonitoring } from '../hooks/useInactivityMonitoring';
 
 const ConfigScreen = () => {
@@ -14,6 +15,7 @@ const ConfigScreen = () => {
   const {
     isMonitoring,
     timeoutMinutes,
+    alertConfig,
     startMonitoring,
     stopMonitoring,
     updateTimeout,
@@ -120,6 +122,14 @@ const ConfigScreen = () => {
         visible={showFAQ}
         onClose={() => setShowFAQ(false)}
         minutes={localMinutes}
+      />
+
+      {/* Custom Alert for Accessibility */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
       />
     </SafeAreaView>
   );

@@ -1,5 +1,6 @@
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { AppState, AppStateStatus } from 'react-native';
+import ScreenStateModule from './ScreenStateModule';
 
 interface ServiceOptions {
     timeoutMinutes: number;
@@ -117,9 +118,23 @@ class InactivityService {
     private handleAppStateChange = (nextAppState: AppStateStatus) => {
         console.log('[SleepGuard] App state changed to:', nextAppState);
         // Reset timer on any app state change (user interaction)
-        if (nextAppState === 'active') {
-            this.resetTimer();
-        }
+        this.resetTimer();
+    };
+
+    private handleScreenOn = () => {
+        console.log('[SleepGuard] Screen turned on - user activity detected');
+        this.resetTimer();
+    };
+
+    private handleUserPresent = () => {
+        console.log('[SleepGuard] User unlocked device - user activity detected');
+        this.resetTimer();
+    };
+
+    private handleAccessibilityActivity = () => {
+        // This is called when Accessibility Service detects user activity
+        console.log('[SleepGuard] 🎯 Accessibility detected user activity');
+        this.resetTimer();
     };
 
     private resetTimer() {
@@ -186,6 +201,17 @@ class InactivityService {
                 this.handleAppStateChange
             );
 
+            // Listen to screen events (screen on, user unlock, and accessibility activity)
+            try {
+                ScreenStateModule.startListening({
+                    onScreenOn: this.handleScreenOn,
+                    onUserPresent: this.handleUserPresent,
+                    onAccessibilityActivity: this.handleAccessibilityActivity,
+                });
+            } catch (screenError) {
+                console.warn('[SleepGuard] ⚠️ Could not start screen state monitoring (will use AppState only):', screenError);
+            }
+
             // Check inactivity every 10 seconds
             this.checkInterval = setInterval(() => {
                 this.checkInactivity();
@@ -218,6 +244,13 @@ class InactivityService {
             if (this.appStateSubscription) {
                 this.appStateSubscription.remove();
                 this.appStateSubscription = undefined;
+            }
+
+            // Stop listening to screen events
+            try {
+                ScreenStateModule.stopListening();
+            } catch (screenError) {
+                console.warn('[SleepGuard] Could not stop screen state monitoring:', screenError);
             }
 
             // Cancel notification (this stops the foreground service)

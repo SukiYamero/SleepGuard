@@ -17,8 +17,8 @@ export default {
         hintText: 'La app volverá al home después de {{minutes}} minuto(s) sin actividad.\nTu dispositivo se apagará según su configuración normal.',
 
         // FAQ Modal
-        howItWorks: 'ℹ️ Cómo funciona?',
-        close: '✕',
+        howItWorks: '💬 ¿Cómo funciona?',
+        close: '×',
 
         // FAQ Questions
         faq: {
@@ -38,6 +38,37 @@ export default {
                 question: '¿Qué permisos necesita?',
                 answer: 'La app requiere permisos de accesibilidad para detectar la inactividad y simular la pulsación del botón Home.',
             },
+            accessibilityPermission: {
+                question: '🔐 ¿Por qué necesita acceso de Accesibilidad?',
+                answer: 'SleepGuard necesita este permiso para:\n\n' +
+                    '• Detectar cuando tocas o deslizas la pantalla\n' +
+                    '• Saber si estás usando otras apps\n' +
+                    '• Identificar correctamente tu inactividad\n\n' +
+                    'IMPORTANTE: Este permiso es por app, NO es global. Solo SleepGuard puede detectar tu actividad, no afecta otras apps.\n\n' +
+                    '📱 Cómo activarlo:\n' +
+                    '1. Ve a Ajustes → Accesibilidad\n' +
+                    '2. Busca "Servicios instalados" o "Servicios descargados"\n' +
+                    '3. Selecciona "SleepGuard"\n' +
+                    '4. Activa el interruptor\n' +
+                    '5. Confirma cuando Android te pregunte\n\n' +
+                    '🔓 Cómo desactivarlo:\n' +
+                    'Sigue los mismos pasos y desactiva el interruptor. Puedes activarlo y desactivarlo cuando quieras.',
+            },
+        },
+
+        // Accessibility Service
+        accessibilityRequired: {
+            title: '🔍 Activar Detección de Actividad',
+            message: 'Para identificar correctamente tu inactividad, SleepGuard necesita detectar cuando interactúas con tu dispositivo (toques, deslizamientos, etc.).\n\n' +
+                '✓ Detecta actividad en todas las apps\n' +
+                '✓ Funciona en segundo plano\n\n' +
+                '📱 Para activarlo:\n' +
+                '1. Toca "Activar Ahora" para abrir Ajustes\n' +
+                '2. Busca "SleepGuard" en la lista\n' +
+                '3. Activa el interruptor\n' +
+                '4. Acepta el permiso cuando Android te lo solicite',
+            remindLater: 'Recordar Después',
+            enableNow: 'Activar Ahora',
         },
 
         // Practical Example

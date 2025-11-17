@@ -41,6 +41,9 @@ export const faqModalStyles = StyleSheet.create({
         color: colors.text.primary,
         fontWeight: fontWeights.bold,
     },
+    faqContainer: {
+        marginBottom: 24,
+    },
     faqSection: {
         marginBottom: 24,
     },
