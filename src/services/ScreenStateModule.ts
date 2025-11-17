@@ -4,6 +4,7 @@ const { ScreenStateModule } = NativeModules;
 
 interface ScreenStateEvents {
     onScreenOn: () => void;
+    onScreenOff: () => void;
     onUserPresent: () => void;
     onAccessibilityActivity?: () => void;
 }
@@ -41,6 +42,11 @@ class ScreenStateService {
                 callbacks.onScreenOn
             );
 
+            const screenOffListener = this.eventEmitter.addListener(
+                'onScreenOff',
+                callbacks.onScreenOff
+            );
+
             const userPresentListener = this.eventEmitter.addListener(
                 'onUserPresent',
                 callbacks.onUserPresent
@@ -53,7 +59,7 @@ class ScreenStateService {
                 )
                 : null;
 
-            this.listeners.push(screenOnListener, userPresentListener);
+            this.listeners.push(screenOnListener, screenOffListener, userPresentListener);
             if (accessibilityListener) {
                 this.listeners.push(accessibilityListener);
             }

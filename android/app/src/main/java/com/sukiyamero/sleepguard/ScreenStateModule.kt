@@ -37,6 +37,10 @@ class ScreenStateModule(reactContext: ReactApplicationContext) : ReactContextBas
                     Intent.ACTION_SCREEN_ON -> {
                         sendEvent("onScreenOn")
                     }
+                    Intent.ACTION_SCREEN_OFF -> {
+                        // Screen turned off - device locked or sleeping
+                        sendEvent("onScreenOff")
+                    }
                     Intent.ACTION_USER_PRESENT -> {
                         // User unlocked the device
                         sendEvent("onUserPresent")
@@ -51,6 +55,7 @@ class ScreenStateModule(reactContext: ReactApplicationContext) : ReactContextBas
 
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_ON)
+            addAction(Intent.ACTION_SCREEN_OFF)
             addAction(Intent.ACTION_USER_PRESENT)
             addAction(InactivityAccessibilityService.ACTION_USER_ACTIVITY)
         }

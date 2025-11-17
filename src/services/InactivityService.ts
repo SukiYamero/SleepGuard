@@ -126,6 +126,14 @@ class InactivityService {
         this.resetTimer();
     };
 
+    private handleScreenOff = () => {
+        console.log('[SleepGuard] 📴 Screen turned off - pausing inactivity timer');
+        // When screen is off, we pause the timer by updating lastActivityTime
+        // This ensures the countdown doesn't continue while device is sleeping
+        // When screen turns on again, handleScreenOn will reset the timer
+        this.resetTimer();
+    };
+
     private handleUserPresent = () => {
         console.log('[SleepGuard] User unlocked device - user activity detected');
         this.resetTimer();
@@ -220,6 +228,7 @@ class InactivityService {
             try {
                 ScreenStateModule.startListening({
                     onScreenOn: this.handleScreenOn,
+                    onScreenOff: this.handleScreenOff,
                     onUserPresent: this.handleUserPresent,
                     onAccessibilityActivity: this.handleAccessibilityActivity,
                 });
@@ -230,7 +239,7 @@ class InactivityService {
             // Check inactivity every 10 seconds
             this.checkInterval = setInterval(() => {
                 this.checkInactivity();
-            }, 10000); // Check every 10 seconds
+            }, 10000);
 
             this.isRunning = true;
             console.log('[SleepGuard] Service started successfully');
