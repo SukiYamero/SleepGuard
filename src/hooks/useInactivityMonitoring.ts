@@ -30,7 +30,9 @@ export const useInactivityMonitoring = () => {
         benefits: [],
         steps: [],
         buttons: [],
-    }); useEffect(() => {
+    }); 
+
+    useEffect(() => {
         setIsMonitoring(InactivityService.isServiceRunning());
 
         checkAccessibilityStatus();
