@@ -17,9 +17,9 @@ class InactivityService {
     private onServiceStoppedCallback?: () => void;
     private appStateSubscription?: any;
     private checkInterval?: ReturnType<typeof setInterval>;
+    private foregroundServiceRegistered = false;
 
     private constructor() {
-        // Setup notification action handler
         this.setupNotificationHandler();
     }
 
@@ -187,13 +187,28 @@ class InactivityService {
             // Show foreground notification (this automatically starts foreground service)
             await this.showServiceNotification();
 
-            // Register the foreground service with notifee (must be after showing notification)
-            notifee.registerForegroundService((_notification) => {
-                return new Promise(() => {
-                    // This promise should never resolve to keep the service running
-                    console.log('[SleepGuard] Foreground service registered');
+            // Register the foreground service with notifee
+            // IMPORTANT: This promise intentionally never resolves to keep the foreground service alive.
+            // According to Notifee documentation, the service runs as long as this promise is pending.
+            // We track registration state with this.foregroundServiceRegistered flag.
+            // 
+            // Memory Management:
+            // - Only one instance exists (singleton pattern prevents multiple registrations)
+            // - The promise lifecycle is tied to the Android foreground service lifecycle
+            // - When stop() is called, notifee.stopForegroundService() cleans up the service
+            // - Android OS automatically cleans up when the process terminates
+            // - No memory leak occurs because the promise is scoped to the service lifecycle
+            if (!this.foregroundServiceRegistered) {
+                notifee.registerForegroundService((_notification) => {
+                    return new Promise<void>(() => {
+                        // This promise never resolves/rejects - this is intentional
+                        // The foreground service stays alive as long as this promise is pending
+                        console.log('[SleepGuard] Foreground service registered and running');
+                    });
                 });
-            });
+                this.foregroundServiceRegistered = true;
+                console.log('[SleepGuard] Foreground service registration completed');
+            }
 
             // Listen to app state changes
             this.appStateSubscription = AppState.addEventListener(
@@ -234,19 +249,16 @@ class InactivityService {
         try {
             console.log('[SleepGuard] Stopping service...');
 
-            // Clear interval
             if (this.checkInterval) {
                 clearInterval(this.checkInterval);
                 this.checkInterval = undefined;
             }
 
-            // Remove app state listener
             if (this.appStateSubscription) {
                 this.appStateSubscription.remove();
                 this.appStateSubscription = undefined;
             }
 
-            // Stop listening to screen events
             try {
                 ScreenStateModule.stopListening();
             } catch (screenError) {
@@ -255,11 +267,10 @@ class InactivityService {
 
             // Cancel notification (this stops the foreground service)
             await notifee.cancelNotification('sleepguard-monitoring');
-
-            // Stop the foreground service
             await notifee.stopForegroundService();
 
             this.isRunning = false;
+            this.foregroundServiceRegistered = false;
 
             // Notify UI that service has stopped
             if (this.onServiceStoppedCallback) {
