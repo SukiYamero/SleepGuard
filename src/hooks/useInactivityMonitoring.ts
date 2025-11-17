@@ -57,18 +57,11 @@ export const useInactivityMonitoring = () => {
     };
 
     const handleInactivityDetected = useCallback(async () => {
-        console.log('[Hook] Inactivity detected! Should navigate to home...');
+        console.log('[Hook] ⏰ Inactivity detected! Navigating to home and stopping service...');
 
+        // Stop the monitoring service
         await InactivityService.stop();
         setIsMonitoring(false);
-
-        // TODO: Implement home button press logic
-        // This will require additional native modules or accessibility services
-        Alert.alert(
-            '🏠 Inactivity Detected',
-            'Simulating home button press...\n\nMonitoring has been stopped. Activate the toggle again to resume.',
-            [{ text: 'OK' }]
-        );
     }, []);
 
     const handleServiceStopped = useCallback(() => {

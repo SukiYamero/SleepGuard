@@ -1,6 +1,7 @@
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { AppState, AppStateStatus } from 'react-native';
 import ScreenStateModule from './ScreenStateModule';
+import NavigateToHomeModule from './NavigateToHomeModule';
 
 interface ServiceOptions {
     timeoutMinutes: number;
@@ -67,7 +68,7 @@ class InactivityService {
                     importance: AndroidImportance.LOW,
                     ongoing: true,
                     autoCancel: false,
-                    smallIcon: 'ic_small_icon', // Using default notification icon
+                    smallIcon: 'ic_small_icon',
                     color: '#3b82f6',
                     asForegroundService: true,
                     actions: [
@@ -119,8 +120,6 @@ class InactivityService {
         console.log('[SleepGuard] App state changed to:', nextAppState);
 
         // Only reset timer when SleepGuard comes to foreground
-        // This indicates user interaction with OUR app
-        // Don't reset when going to background, as that's not user activity
         if (nextAppState === 'active') {
             console.log('[SleepGuard] SleepGuard brought to foreground - user interaction');
             this.resetTimer();
@@ -137,7 +136,6 @@ class InactivityService {
     private handleScreenOff = () => {
         console.log('[SleepGuard] 📴 Screen turned off - pausing inactivity timer');
         // When screen is off, we pause the timer by updating lastActivityTime
-        // This ensures the countdown doesn't continue while device is sleeping
         // When screen turns on again, handleScreenOn will reset the timer
         this.resetTimer();
     };
@@ -148,7 +146,7 @@ class InactivityService {
     };
 
     private handleAccessibilityActivity = () => {
-        // This is called when Accessibility Service detects user activity
+        // Called when Accessibility Service detects user activity
         const now = new Date().toISOString().substr(11, 12);
         console.log(`[SleepGuard] 🎯 [${now}] Accessibility detected user activity`);
         this.resetTimer();
@@ -159,7 +157,7 @@ class InactivityService {
         console.log('[SleepGuard] Timer reset');
     }
 
-    private checkInactivity = () => {
+    private checkInactivity = async () => {
         try {
             const now = Date.now();
             const elapsedMinutes = (now - this.lastActivityTime) / (1000 * 60);
@@ -176,7 +174,13 @@ class InactivityService {
 
             // Check if timeout reached
             if (elapsedMinutes >= this.timeoutMinutes) {
-                console.log('[SleepGuard] Inactivity timeout reached!');
+                console.log('[SleepGuard] ⏰ Inactivity timeout reached!');
+
+                // Navigate to home screen
+                console.log('[SleepGuard] 🏠 Navigating to home screen...');
+                await NavigateToHomeModule.goToHome();
+
+                // Call the callback (if provided) for any additional actions
                 if (this.onInactivityCallback) {
                     this.onInactivityCallback();
                 }
@@ -207,19 +211,16 @@ class InactivityService {
             // Register the foreground service with notifee
             // IMPORTANT: This promise intentionally never resolves to keep the foreground service alive.
             // According to Notifee documentation, the service runs as long as this promise is pending.
-            // We track registration state with this.foregroundServiceRegistered flag.
             // 
             // Memory Management:
             // - Only one instance exists (singleton pattern prevents multiple registrations)
             // - The promise lifecycle is tied to the Android foreground service lifecycle
             // - When stop() is called, notifee.stopForegroundService() cleans up the service
-            // - Android OS automatically cleans up when the process terminates
             // - No memory leak occurs because the promise is scoped to the service lifecycle
             if (!this.foregroundServiceRegistered) {
                 notifee.registerForegroundService((_notification) => {
                     return new Promise<void>(() => {
                         // This promise never resolves/rejects - this is intentional
-                        // The foreground service stays alive as long as this promise is pending
                         console.log('[SleepGuard] Foreground service registered and running');
                     });
                 });
@@ -227,13 +228,11 @@ class InactivityService {
                 console.log('[SleepGuard] Foreground service registration completed');
             }
 
-            // Listen to app state changes
             this.appStateSubscription = AppState.addEventListener(
                 'change',
                 this.handleAppStateChange
             );
 
-            // Listen to screen events (screen on, user unlock, and accessibility activity)
             try {
                 ScreenStateModule.startListening({
                     onScreenOn: this.handleScreenOn,
@@ -245,8 +244,7 @@ class InactivityService {
                 console.warn('[SleepGuard] ⚠️ Could not start screen state monitoring (will use AppState only):', screenError);
             }
 
-            // Optimized: Check every 30 seconds (2 times per minute)
-            // Perfect for 10-30 minute timeouts, reduces CPU usage by 67%
+            // Check every 30 seconds (2 times per minute)
             // Timer resets instantly on activity, this only updates notification
             this.checkInterval = setInterval(() => {
                 this.checkInactivity();
