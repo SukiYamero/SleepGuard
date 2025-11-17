@@ -16,7 +16,9 @@ export interface AlertConfig {
         onPress: () => void;
         style?: 'default' | 'cancel' | 'destructive';
     }>;
-}export const useInactivityMonitoring = () => {
+}
+
+export const useInactivityMonitoring = () => {
     const { t } = useTranslation();
     const [isMonitoring, setIsMonitoring] = useState(false);
     const [timeoutMinutes, setTimeoutMinutes] = useState(1);
