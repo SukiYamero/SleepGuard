@@ -32,6 +32,18 @@ export const useInactivityMonitoring = () => {
         buttons: [],
     });
 
+    const checkAccessibilityStatus = useCallback(async () => {
+        try {
+            const enabled = await AccessibilityService.isEnabled();
+            setAccessibilityEnabled(enabled);
+            return enabled;
+        } catch (error) {
+            console.warn('[Hook] Could not check accessibility status:', error);
+            setAccessibilityEnabled(false);
+            return false;
+        }
+    }, []);
+
     useEffect(() => {
         setIsMonitoring(InactivityService.isServiceRunning());
 
@@ -42,33 +54,14 @@ export const useInactivityMonitoring = () => {
                 InactivityService.stop().catch(console.error);
             }
         };
-    }, []);
-
-    const checkAccessibilityStatus = async () => {
-        try {
-            const enabled = await AccessibilityService.isEnabled();
-            setAccessibilityEnabled(enabled);
-            return enabled;
-        } catch (error) {
-            console.warn('[Hook] Could not check accessibility status:', error);
-            setAccessibilityEnabled(false);
-            return false;
-        }
-    };
+    }, [checkAccessibilityStatus]);
 
     const handleInactivityDetected = useCallback(async () => {
-        console.log('[Hook] Inactivity detected! Should navigate to home...');
+        console.log('[Hook] ⏰ Inactivity detected! Navigating to home and stopping service...');
 
+        // Stop the monitoring service
         await InactivityService.stop();
         setIsMonitoring(false);
-
-        // TODO: Implement home button press logic
-        // This will require additional native modules or accessibility services
-        Alert.alert(
-            '🏠 Inactivity Detected',
-            'Simulating home button press...\n\nMonitoring has been stopped. Activate the toggle again to resume.',
-            [{ text: 'OK' }]
-        );
     }, []);
 
     const handleServiceStopped = useCallback(() => {
@@ -158,15 +151,20 @@ export const useInactivityMonitoring = () => {
                     {
                         text: t('accessibility.remindLater'),
                         onPress: () => {
-                            console.log('[Hook] User chose to continue without accessibility');
+                            console.log('[Hook] User chose to remind later - stopping monitoring');
                             setAlertConfig(prev => ({ ...prev, visible: false }));
+                            // Ensure toggle goes back to OFF if user declined
+                            setIsMonitoring(false);
                         },
                         style: 'cancel',
                     },
                 ],
             });
+            // Don't start the service without accessibility permission
+            return;
         }
 
+        // Only proceed if accessibility is enabled
         try {
             const hasPermission = await requestNotificationPermission();
             if (!hasPermission) {
@@ -186,7 +184,7 @@ export const useInactivityMonitoring = () => {
                 'Failed to start background monitoring. Please check permissions.'
             );
         }
-    }, [timeoutMinutes, handleInactivityDetected, handleServiceStopped, requestNotificationPermission, t]);
+    }, [timeoutMinutes, handleInactivityDetected, handleServiceStopped, requestNotificationPermission, t, checkAccessibilityStatus]);
 
     const stopMonitoring = useCallback(async () => {
         try {

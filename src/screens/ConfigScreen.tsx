@@ -28,8 +28,9 @@ const ConfigScreen = () => {
     setLocalMinutes(timeoutMinutes);
   }, [timeoutMinutes]);
 
-  const toggleSwitch = async () =>
+  const toggleSwitch = async () => {
     isMonitoring ? await stopMonitoring() : await startMonitoring();
+  };
 
   const handleSliderChange = (value: number) => {
     setLocalMinutes(value);
