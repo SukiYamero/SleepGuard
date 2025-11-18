@@ -20,7 +20,6 @@ const ConfigScreen = () => {
     stopMonitoring,
     updateTimeout,
     resetActivity,
-    checkAccessibilityStatus,
   } = useInactivityMonitoring();
 
   const [localMinutes, setLocalMinutes] = useState(timeoutMinutes);
@@ -28,15 +27,6 @@ const ConfigScreen = () => {
   useEffect(() => {
     setLocalMinutes(timeoutMinutes);
   }, [timeoutMinutes]);
-
-  // Check accessibility status when screen is focused
-  useEffect(() => {
-    const interval = setInterval(() => {
-      checkAccessibilityStatus();
-    }, 2000); // Check every 2 seconds
-
-    return () => clearInterval(interval);
-  }, [checkAccessibilityStatus]);
 
   const toggleSwitch = async () => {
     isMonitoring ? await stopMonitoring() : await startMonitoring();
